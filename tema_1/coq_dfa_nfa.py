@@ -2,6 +2,7 @@
 # Grupa 152
 # Python 3.12.6
 
+#-----------------------------------------File Parsing-----------------------------------------#
 def readLinesWhile(block):
     data, i = [], 0 # tratarea tuplurilor din sectiunile STATES si TRANSITIONS
     while i < len(block) and block[i].strip().upper() != "END":
@@ -31,7 +32,10 @@ def configFileParser(filePath):
                 i += 1
         i += 1
     return states, transitions, alphabet # cele 3 sectiuni ale automatului
+#----------------------------------------------------------------------------------------------#
 
+
+#-----------------------------------------Automata Issue Checker-----------------------------------------#
 def solveSigmaConflicts(transitions, sigma):
     # verificare daca exista litere in tranzitiile
     # date care nu exista in alfabetul dat ca input
@@ -70,7 +74,10 @@ def checkStates(states):
     if contor == 0:
         return False # nu exista stare de intrare
     return startState, finalStates # automatul este valid
+#--------------------------------------------------------------------------------------------------------#
 
+
+#--------------------------Transition mapping and automata type determination----------------------------#
 def transitPathing(transit):
     dic = {} # este creat dictionarul tranzitiilor
     for trans in transit: # iterarea prin array-ul de tranzitii
@@ -84,11 +91,14 @@ def transitPathing(transit):
 
 def determineType(dic):
     for trans in dic: # primul return este string-ul afisat in terminat
-        for state in dic[trans]: # al doilea este o valoare booleana
-            if len(dic[trans][state]) > 1: # necesara functiei wordChecker
-                return "nedeterminist (NFA)", 0
-    return "determinist (DFA)", 1
+        for letter in dic[trans]: # al doilea este o valoare booleana
+            if len(dic[trans][letter]) > 1: # necesara functiei wordChecker
+                return "nedeterminist (NFA)\n", 0
+    return "determinist (DFA)\n", 1
+#--------------------------------------------------------------------------------------------------------#
 
+
+#-----------------------------------------Word Checking-----------------------------------------#
 def wordChecker(word, init, fin, transit, automaType):
     if automaType: # cazul DFA
         currStat = init # initierea starii initiale
@@ -117,15 +127,20 @@ def wordChecker(word, init, fin, transit, automaType):
             if stat in fin: # verificam daca starile finale ale cuvantului sunt valide
                 return "cuvantul FACE parte din limbaj!" # este necesara cel putin una
         return "cuvantul NU face parte din limbaj" # daca nu exista NICI o stare valida
+#-----------------------------------------------------------------------------------------------#
 
+
+#-----------------------------------------MAIN-----------------------------------------#
 def main():
-    fileAbsolutePath = input() # path-ul absolut al fisierului dat ca string
+    fileAbsolutePath = input("Calea absoluta a fisierului: ") # path-ul absolut al fisierului dat ca string
     stat, transit, sigma = configFileParser(fileAbsolutePath) # parsarea datelor din fisier
 
     if not(solveSigmaConflicts(transit, sigma) and solveStateConflicts(transit, stat)):
-        return "!!Automatul este invalid (prin conflicte logice la nivelul declararii datelor de intrare)"
+        print("!!Automatul este invalid (prin conflicte logice la nivelul declararii datelor de intrare)")
+        return
     if not checkStates(stat): # probleme la starea initiala (starting state)
-        return "!!Automatul este invalid (nu exista o unica stare initiala/ de intrare)"
+        print("!!Automatul este invalid (nu exista o unica stare initiala/ de intrare)")
+        return
     else: # automatul este valid, sunt determinate starile speciale (starea initiala si starile finale)
         print("Automatul este valid ", end="")
         initState, finStates = checkStates(stat)
@@ -133,8 +148,15 @@ def main():
     dicTransit = transitPathing(transit) # maparea tranzitiilor
     print(determineType(dicTransit)[0]) # determinarea tipului de automat
 
-    inputWord = input() # cuvantul de verificat
-    return wordChecker(inputWord, initState, finStates, dicTransit, determineType(dicTransit)[1])
+    while (True):
+        inputWord = input("Cuvantul de verificat: ") # cuvantul de verificat
+        inputWord = inputWord.strip()
+        if inputWord.upper() == "KILL PROCEDURE":
+            print("ENDING PROCEDURE...")
+            break
+        print(wordChecker(inputWord, initState, finStates, dicTransit, determineType(dicTransit)[1]))
+        print()
 
 if __name__ == '__main__':
-    print(main())
+    main()
+#--------------------------------------------------------------------------------------#
