@@ -3,13 +3,13 @@
 A script that checks if the description of a finite automaton is valid and determines whether it is deterministic (DFA) or non-deterministic (NFA), and also lets the user provide various words, that are then chcked if they can be accepted by the automaton or not
 
 ## Table of Contents
-- [Parser](#parser)
-- [Validity Checker](#validity-checker)
-- [Automaton Processing](#automaton-processing)
-  - [Mapping of Transitions](#mapping-of-transitions)
-  - [Automaton Type Determination](#automaton-type-determination)
-- [Word Checker](#word-checker)
-- [Main Function](#main-function)
+- [1. Parser](#parser)
+- [2. Validity Checker](#validity-checker)
+- [3. Automaton Processing](#automaton-processing)
+  - [3.1. Mapping of Transitions](#mapping-of-transitions)
+  - [3.2. Automaton Type Determination](#automaton-type-determination)
+- [4. Word Checker](#word-checker)
+- [5. Main Function](#main-function)
 
 ---
 
