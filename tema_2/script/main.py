@@ -31,15 +31,15 @@ def main(file_path):
             print(f"Word given: {input_string} - ", end="")
             if word_checker(input_string, dfa) == expected:
                 if expected is True:
-                    print("PASSED")
+                    print("PASSED") # word is accepted by automata
                 else:
-                    print("FAILED")
+                    print("FAILED") # word is NOT accepted
             else:
                 print("FATAL ERROR")
                 break
         print()
 
 if __name__ == '__main__':
-    # json_file_path = input("Please, provide the path of the .json file: ")
-    # main(json_file_path)
-    main("../LFA-Assignment2_Regex_DFA_v2.json")
+    json_file_path = input("Please, provide the path of the .json file: ")
+    main(json_file_path)
+    # main("../LFA-Assignment2_Regex_DFA_v2.json")

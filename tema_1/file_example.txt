@@ -4,9 +4,11 @@
 States:
 	q1, S
 	q2, F
+
 	q3
 	q4
 	q5, F
+
 End
 Sigma:
 0
@@ -20,6 +22,7 @@ q2,1,q3
 q3,0,q2
 q3,1,q2
 q4,0,q5
+# ts
 q4,1,q5
 q5,0,q4
 q5,1,q4
