@@ -6,7 +6,7 @@ class CFG:
     def __init__(self): # member data
         self.non_terminals = set()
         self.terminals = set()
-        self.productions = []
+        self.productions = {}
         self.start_symbol = None
 
     # member functions for data manipulation
@@ -14,9 +14,13 @@ class CFG:
         self.start_symbol = symbol
         self.non_terminals.add(symbol)
 
-    def add_production(self, production):
-        if production not in self.productions:
-            self.productions.append(production)
+    def add_production(self, symbol, production):
+        if symbol not in self.non_terminals:
+            self.non_terminals.add(symbol)
+        if symbol not in self.productions:
+            self.productions[symbol] = []
+        if production not in self.productions[symbol]:
+            self.productions[symbol].append(production)
             for symbol in production: # symbol sorting
                 if symbol.islower():
                     self.terminals.add(symbol)
@@ -25,8 +29,8 @@ class CFG:
 
     # printing member functions
     def print_cfg(self): # display of given CFG
-        prods = " | ".join(self.productions)
-        print(self.start_symbol, "->", prods)
+        for symbol in self.non_terminals:
+            print(symbol, "->", " | ".join(self.productions[symbol]))
 
     def print_cfg_info(self): # component display of given CFG
         print("Start symbol:", self.start_symbol)
@@ -34,26 +38,28 @@ class CFG:
         print("Terminals:", self.terminals)
         print("Productions:", self.productions)
 
-    def production_choice(self): # weighted decision
-        non_epsilon_productions = [prod for prod in self.productions if prod != "ε"]
-        epsilon_chance = 50 / len(self.productions) # epsilon has smaller chance
-        if rand.randint(1, 100) <= epsilon_chance: # of being picked
-            return "ε"
-        else: # rest of the productions are 'equally weighed'
-            return non_epsilon_productions[rand.randint(0, len(non_epsilon_productions) - 1)]
-
+    def production_choice(self, symbol): # weighted decision
+        if "ε" in self.productions[symbol]:
+            non_epsilon_productions = [prod for prod in self.productions[symbol] if prod != "ε"]
+            epsilon_chance = 50 / len(self.productions[symbol]) # epsilon has smaller chance
+            if rand.randint(1, 100) <= epsilon_chance: # of being picked
+                return "ε"
+            else: # rest of the productions are 'equally weighed'
+                return non_epsilon_productions[rand.randint(0, len(non_epsilon_productions) - 1)]
+        else:
+            return self.productions[symbol][rand.randint(0, len(self.productions[symbol]) - 1)]
 
 def string_generator(cfg, max_num_words=10, max_word_length=10):
     print("Randomly generated strings from the given CFG:")
     generated_strings = [] # keep track of all strings
 
     for i in range(max_num_words):
-        current_string= cfg.start_symbol
+        current_string = cfg.start_symbol
 
         while any(symbol in cfg.non_terminals for symbol in current_string):
             for j, symbol in enumerate(current_string):
                 if symbol in cfg.non_terminals:
-                    chosen_prod = cfg.production_choice()
+                    chosen_prod = cfg.production_choice(symbol)
                     if chosen_prod == "ε":
                         current_string = current_string[:j] + current_string[j + 1:]
                     else:
@@ -92,7 +98,7 @@ def membership_derivation(cfg, target_string=""):
 
         for i, symbol in enumerate(current_string):
             if symbol in cfg.non_terminals:
-                for prod in cfg.productions:
+                for prod in cfg.productions[symbol]:
                     new_string = current_string[:i] + prod + current_string[i + 1:]
 
                     if find_derivation(new_string, steps):
@@ -107,6 +113,8 @@ def membership_derivation(cfg, target_string=""):
         print(" -> ".join(derivation_steps), end="")
         if len(target_string) > 1: # add the additional step of removing
             print(f" -> {target_string}") # all epsilon symbols
+        else:
+            print()
         return True # boolean membership tester
     else:
         print(f"No derivation found - {target_string} NOT in language") # prints

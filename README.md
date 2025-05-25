@@ -10,4 +10,4 @@
 
 The script will then check if for the given RegEx, a set of words *(all provided via json files)* can be accepted by its **DFA machine**.
 
-**`3)`**
+**`3)` Context-Free Grammars** A fair implementation of CFG functionalities: defining, string generation, derivation and membership testing. Additionally, a separate dummy file tries to replicate *an infamous non-context-free language*.  
